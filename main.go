@@ -99,12 +99,12 @@ func main()  {
 
 func getJdTime() (int64,error) {
 	req:=httpc.NewRequest(client)
-	resp,body,err:=req.SetUrl("https://a.jd.com//ajax/queryServerData.html").SetMethod("get").Send().End()
+	resp,body,err:=req.SetUrl("https://api.m.jd.com/client.action?functionId=queryMaterialProducts&client=wh5").SetMethod("get").Send().End()
 	if err!=nil || resp.StatusCode!=http.StatusOK {
 		log.Println("获取京东服务器时间失败")
 		return 0,errors.New("获取京东服务器时间失败")
 	}
-	return gjson.Get(body,"serverTime").Int(),nil
+	return gjson.Get(body,"currentTime2").Int(),nil
 }
 
 func start(seckill *jd_seckill.Seckill,taskNum int)  {
