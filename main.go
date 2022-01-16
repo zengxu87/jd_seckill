@@ -50,18 +50,22 @@ func main()  {
 
 	//用户登录
 	user:=jd_seckill.NewUser(client,config)
-	wlfstkSmdl,err:=user.QrLogin()
-	if err!=nil{
-		os.Exit(0)
-	}
-	ticket:=""
-	for  {
-		ticket,err=user.QrcodeTicket(wlfstkSmdl)
-		if err==nil && ticket!=""{
-			break
+	ticket:=conf.Read("config","ticket")
+	//ticket:=""
+	if ticket == "" {
+		wlfstkSmdl,err:=user.QrLogin()
+		if err!=nil{
+			os.Exit(0)
 		}
-		time.Sleep(2*time.Second)
+		for  {
+			ticket,err=user.QrcodeTicket(wlfstkSmdl)
+			if err==nil && ticket!=""{
+				break
+			}
+			time.Sleep(2*time.Second)
+		}
 	}
+	log.Println("ticket=", ticket)
 	_,err=user.TicketInfo(ticket)
 	if err==nil {
 		log.Println("登录成功")
