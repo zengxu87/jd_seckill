@@ -94,7 +94,10 @@ func (this *User) TicketInfo(ticket string) (string,error) {
 	if gjson.Get(body,"returnCode").Int()==0 {
 		log.Println("二维码信息校验成功")
 		cookies:=resp.Cookies()
-		log.Println("cookies:", cookies)
+		for _, cookie := cookies {
+			log.Println("cookie:", cookies)
+		}
+		
 		return "",nil
 	}else{
 		log.Println("二维码信息校验失败")
