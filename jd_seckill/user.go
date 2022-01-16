@@ -81,7 +81,8 @@ func (this *User) TicketInfo(ticket string) (string,error) {
 	req:=httpc.NewRequest(this.client)
 	req.SetHeader("User-Agent",this.conf.Read("config","DEFAULT_USER_AGENT"))
 	req.SetHeader("Referer","https://passport.jd.com/uc/login?ltype=logout")
-	resp,body,err:=req.SetUrl("https://passport.jd.com/uc/qrCodeTicketValidation?t="+ticket).SetMethod("get").Send().End()
+	resp,body,err:=req.SetUrl("https://passport.jd.com/uc/qrCodeTicketValidation?ReturnUrl=https://union.jd.com/index&t="+ticket).SetMethod("get").Send().End()
+	//https://passport.jd.com/uc/qrCodeTicketValidation?t={ticket}&ReturnUrl=https://union.jd.com/index&callback=jsonp
 	log.Println("TicketInfo##########", resp)
 	log.Println("TicketInfo##########", body)
 	log.Println("TicketInfo##########", err)
