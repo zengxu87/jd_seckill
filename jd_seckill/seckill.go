@@ -94,7 +94,7 @@ func (this *Seckill) MakeReserve() (string, error ){
 				log.Println("预约成功，已获得抢购资格 / 您已成功预约过了，无需重复预约")
 				log.Println("resp=",resp)
 				log.Println("body=",body)
-				log.Println("req=",req)
+				log.Printf("req=%++v",req)
 			}
 		}
 	}
