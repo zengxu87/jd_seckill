@@ -50,7 +50,7 @@ func main()  {
 
 	//用户登录
 	user:=jd_seckill.NewUser(client,config)
-	ticket:=conf.Read("config","ticket")
+	ticket:=config.Read("config","ticket")
 	//ticket:=""
 	if ticket == "" {
 		wlfstkSmdl,err:=user.QrLogin()
@@ -66,7 +66,7 @@ func main()  {
 		}
 	}
 	log.Println("ticket=", ticket)
-	_,err=user.TicketInfo(ticket)
+	_,err:=user.TicketInfo(ticket)
 	if err==nil {
 		log.Println("登录成功")
 		//刷新用户状态和获取用户信息
