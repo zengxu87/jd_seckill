@@ -70,7 +70,9 @@ func (this *Seckill) MakeReserve() (string, error ){
 	}else{
 		reserveUrl:=gjson.Get(body,"yuyueInfo.url").String()
 		buyDate=gjson.Get(body,"yuyueInfo.buyTime").String()
-		reserveTime:=gjson.Get(body,"yuyueInfo.yuyueTime").String()
+		reserveDuration:=gjson.Get(body,"yuyueInfo.yuyueTime").String()
+		sp := strings.Split(reserveDuration, "~")
+		reserveTime = sp[0]
 		log.Println("获取预约信息:",gjson.Get(body,"yuyueInfo").String())
 		log.Println("reserveUrl:",reserveUrl)
 		log.Println("buyDate:",buyDate)
