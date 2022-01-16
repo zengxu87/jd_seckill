@@ -61,7 +61,7 @@ func (this *User) QrcodeTicket(wlfstkSmdl string) (string,error) {
 	req:=httpc.NewRequest(this.client)
 	req.SetHeader("User-Agent",this.conf.Read("config","DEFAULT_USER_AGENT"))
 	req.SetHeader("Referer","https://passport.jd.com/new/login.aspx")
-	resp,body,err:=req.SetUrl("https://qr.m.jd.com/check?appid=133&callback=jQuery"+strconv.Itoa(common.Rand(1000000,9999999))+"&token="+wlfstkSmdl+"&_="+strconv.Itoa(int(time.Now().Unix()*1000))).SetMethod("get").Send().End()
+	resp,body,err:=req.SetUrl("https://qr.m.jd.com/check?appid=133&"+"&token="+wlfstkSmdl+"&_="+strconv.Itoa(int(time.Now().Unix()*1000))).SetMethod("get").Send().End()
 	log.Println("已完成##########", resp)
 	log.Println("已完成##########", body)
 	log.Println("已完成##########", err)
@@ -82,6 +82,9 @@ func (this *User) TicketInfo(ticket string) (string,error) {
 	req.SetHeader("User-Agent",this.conf.Read("config","DEFAULT_USER_AGENT"))
 	req.SetHeader("Referer","https://passport.jd.com/uc/login?ltype=logout")
 	resp,body,err:=req.SetUrl("https://passport.jd.com/uc/qrCodeTicketValidation?t="+ticket).SetMethod("get").Send().End()
+	log.Println("TicketInfo##########", resp)
+	log.Println("TicketInfo##########", body)
+	log.Println("TicketInfo##########", err)
 	if err!=nil || resp.StatusCode!=http.StatusOK {
 		log.Println("二维码信息校验失败")
 		return "",errors.New("二维码信息校验失败")
