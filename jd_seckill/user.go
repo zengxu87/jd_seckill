@@ -90,7 +90,7 @@ func (this *User) TicketInfo(ticket string) (string,error) {
 		log.Println("二维码信息校验失败")
 		return "",errors.New("二维码信息校验失败")
 	}
-	if gjson.Get(body,"returnCode").Int()==0 {
+	if gjson.Get(body,"code").Int()==0 {
 		log.Println("二维码信息校验成功")
 		return "",nil
 	}else{
