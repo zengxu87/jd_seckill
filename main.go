@@ -67,7 +67,7 @@ func main()  {
 		log.Println("登录成功")
 		//刷新用户状态和获取用户信息
 		for {
-			time.Sleep(time.Duration(time.Second))
+			time.Sleep(time.Duration(1*time.Second))
 			if status:=user.RefreshStatus();status==nil {
 				userInfo,_:=user.GetUserInfo()
 				log.Println("用户:"+userInfo)
@@ -96,9 +96,9 @@ func main()  {
 				log.Println("时间到达，开始执行……")
 				start(seckill,5)
 				wg.Wait()
+			}else{
+				log.Println("登录失败")
 			}
-		}else{
-			log.Println("登录失败")
 		}
 	}
 }
