@@ -69,7 +69,6 @@ func main()  {
 	cookies,err:=user.TicketInfo(ticket)
 	if err==nil {
 		log.Println("登录成功")
-		jd_seckill.SetCookies(cookies)
 		//刷新用户状态和获取用户信息
 		for {
 			time.Sleep(time.Duration(1*time.Second))
@@ -78,6 +77,7 @@ func main()  {
 				log.Println("用户:"+userInfo)
 				//开始预约,预约过的就重复预约
 				seckill:=jd_seckill.NewSeckill(client,config)
+				seckill.SetCookies(cookies)
 				buyDate, err := seckill.MakeReserve()
 				if err != nil {
 					log.Println("预订出错...:", err)
