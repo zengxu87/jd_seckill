@@ -89,6 +89,8 @@ func (this *Seckill) MakeReserve() (string, error ){
 			req.SetCookies(this.cookies)
 			req.SetHeader("Host","yushou.jd.com")
 			req.SetHeader("Connection","keep-alive")
+			req.SetHeader("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
+			req.SetHeader("Accept-Encoding","gzip, deflate, br")
 			resp,body,err =req.SetUrl("https:"+reserveUrl).SetMethod("get").Send().End()
 			if err == nil {
 				log.Println("预约成功，已获得抢购资格 / 您已成功预约过了，无需重复预约")
