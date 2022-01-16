@@ -66,7 +66,7 @@ func main()  {
 		}
 	}
 	log.Println("ticket=", ticket)
-	cookie,err:=user.TicketInfo(ticket)
+	_,err:=user.TicketInfo(ticket)
 	if err==nil {
 		log.Println("登录成功")
 		//seckill.SetCookies(cookie)
