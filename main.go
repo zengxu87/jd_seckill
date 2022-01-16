@@ -75,7 +75,7 @@ func main()  {
 				seckill:=jd_seckill.NewSeckill(client,config)
 				buyDate, err := seckill.MakeReserve()
 				if err != nil {
-					log.Println("预订出错...:%v", err)
+					log.Println("预订出错...:", err)
 					break
 				}
 				//等待抢购/开始抢购

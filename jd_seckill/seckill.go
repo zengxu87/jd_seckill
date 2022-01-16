@@ -71,6 +71,10 @@ func (this *Seckill) MakeReserve() (string, error ){
 		reserveUrl:=gjson.Get(body,"yuyueInfo.url").String()
 		buyDate=gjson.Get(body,"yuyueInfo.buyTime").String()
 		reserveTime:=gjson.Get(body,"yuyueInfo.yuyueTime").String()
+		log.Println("获取预约信息:",gjson.Get(body,"yuyueInfo").String())
+		log.Println("reserveUrl:",reserveUrl)
+		log.Println("buyDate:",buyDate)
+		log.Println("reserveTime:",reserveTime)
 		if this.waitForReserveTime(reserveTime) {
 			req=httpc.NewRequest(this.client)
 			_,_,err =req.SetUrl("https:"+reserveUrl).SetMethod("get").Send().End()
