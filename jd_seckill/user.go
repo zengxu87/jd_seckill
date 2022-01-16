@@ -61,7 +61,7 @@ func (this *User) QrcodeTicket(wlfstkSmdl string) (string,error) {
 	req:=httpc.NewRequest(this.client)
 	req.SetHeader("User-Agent",this.conf.Read("config","DEFAULT_USER_AGENT"))
 	req.SetHeader("Referer","https://passport.jd.com/new/login.aspx")
-	resp,body,err:=req.SetUrl("https://qr.m.jd.com/check?appid=133&"+"&token="+wlfstkSmdl+"&_="+strconv.Itoa(int(time.Now().Unix()*1000))).SetMethod("get").Send().End()
+	resp,body,err:=req.SetUrl("https://qr.m.jd.com/check?appid=133"+"&token="+wlfstkSmdl+"&_="+strconv.Itoa(int(time.Now().Unix()*1000))).SetMethod("get").Send().End()
 	log.Println("已完成##########", resp)
 	log.Println("已完成##########", body)
 	log.Println("已完成##########", err)
