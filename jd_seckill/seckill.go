@@ -19,12 +19,16 @@ import (
 type Seckill struct {
 	client *httpc.HttpClient
 	conf *conf.Config
+	cookies *httpc.Cookies
 }
 
 func NewSeckill(client *httpc.HttpClient,conf *conf.Config) *Seckill {
 	return &Seckill{client: client,conf: conf}
 }
 
+funct (this *Seckill) SetCookies(cookies *httpc.Cookies) {
+	this.cookies = cookies
+}
 func (this *Seckill) SkuTitle() (string,error) {
 	skuId:=this.conf.Read("config","sku_id")
 	req:=httpc.NewRequest(this.client)
