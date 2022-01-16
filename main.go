@@ -69,7 +69,7 @@ func main()  {
 	cookie,err:=user.TicketInfo(ticket)
 	if err==nil {
 		log.Println("登录成功")
-		seckill.SetCookies(cookie)
+		//seckill.SetCookies(cookie)
 		//刷新用户状态和获取用户信息
 		for {
 			time.Sleep(time.Duration(1*time.Second))
