@@ -79,9 +79,10 @@ func (this *Seckill) MakeReserve() (string, error ){
 		log.Println("reserveTime:",reserveTime)
 		if this.waitForReserveTime(reserveTime) {
 			req=httpc.NewRequest(this.client)
-			_,_,err =req.SetUrl("https:"+reserveUrl).SetMethod("get").Send().End()
+			_,body,err =req.SetUrl("https:"+reserveUrl).SetMethod("get").Send().End()
 			if err == nil {
 				log.Println("预约成功，已获得抢购资格 / 您已成功预约过了，无需重复预约")
+				log.Println(body)
 			}
 		}
 	}
