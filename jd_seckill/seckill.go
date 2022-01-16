@@ -26,7 +26,7 @@ func NewSeckill(client *httpc.HttpClient,conf *conf.Config) *Seckill {
 	return &Seckill{client: client,conf: conf}
 }
 
-funct (this *Seckill) SetCookies(cookies *httpc.Cookies) {
+func (this *Seckill) SetCookies(cookies *httpc.Cookies) {
 	this.cookies = cookies
 }
 func (this *Seckill) SkuTitle() (string,error) {
