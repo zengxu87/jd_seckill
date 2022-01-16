@@ -87,6 +87,8 @@ func (this *Seckill) MakeReserve() (string, error ){
 		if this.waitForReserveTime(reserveTime) {
 			req=httpc.NewRequest(this.client)
 			req.SetCookies(this.cookies)
+			req.SetHeader("Host","yushou.jd.com")
+			req.SetHeader("Connection","keep-alive")
 			resp,body,err =req.SetUrl("https:"+reserveUrl).SetMethod("get").Send().End()
 			if err == nil {
 				log.Println("预约成功，已获得抢购资格 / 您已成功预约过了，无需重复预约")
