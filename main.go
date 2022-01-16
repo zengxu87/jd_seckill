@@ -71,11 +71,14 @@ func main()  {
 			log.Println("用户:"+userInfo)
 			//开始预约,预约过的就重复预约
 			seckill:=jd_seckill.NewSeckill(client,config)
-			seckill.MakeReserve()
+			buyDate, err := seckill.MakeReserve()
+			if err != nil {
+				log.Println("预订出错...:%v", err)
+				break
+			}
 			//等待抢购/开始抢购
 			nowLocalTime:=time.Now().UnixNano()/1e6
 			jdTime,_:=getJdTime()
-			buyDate:=config.Read("config","buy_time")
 			loc, _ := time.LoadLocation("Local")
 			t,_:=time.ParseInLocation("2006-01-02 15:04:05",buyDate,loc)
 			buyTime:=t.UnixNano()/1e6

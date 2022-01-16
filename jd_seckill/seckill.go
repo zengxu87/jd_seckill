@@ -37,11 +37,26 @@ func (this *Seckill) SkuTitle() (string,error) {
 	doc,_:=goquery.NewDocumentFromReader(html)
 	return strings.TrimSpace(doc.Find(".sku-name").Text()),nil
 }
+func (this *Seckill) waitForReserveTime(buyDate string) bool {
+	nowLocalTime:=time.Now().UnixNano()/1e6
+	loc, _ := time.LoadLocation("Local")
+	t,_:=time.ParseInLocation("2006-01-02 15:04",buyDate,loc)
+	buyTime:=t.UnixNano()/1e6
 
-func (this *Seckill) MakeReserve() {
+	log.Println(fmt.Sprintf("正在等待到达预订时间:%s",buyDate))
+	timerTime:=buyTime - nowLocalTime
+	if timerTime > 0 {
+		time.Sleep(time.Duration(timerTime)*time.Millisecond)
+	}
+	log.Println(fmt.Sprintf("已到达预订时间:%s",buyDate))
+	return true
+}
+func (this *Seckill) MakeReserve() (string, error ){
+	var buyDate string
 	shopTitle,err:=this.SkuTitle()
 	if err!=nil {
 		log.Println("获取商品信息失败")
+		return buyDate, err
 	}else{
 		log.Println("商品名称:"+shopTitle)
 	}
@@ -49,15 +64,22 @@ func (this *Seckill) MakeReserve() {
 	req:=httpc.NewRequest(this.client)
 	req.SetHeader("User-Agent",this.conf.Read("config","DEFAULT_USER_AGENT"))
 	req.SetHeader("Referer",fmt.Sprintf("https://item.jd.com/%s.html",skuId))
-	resp,body,err:=req.SetUrl("https://yushou.jd.com/youshouinfo.action?callback=fetchJSON&sku="+skuId+"&_="+strconv.Itoa(int(time.Now().Unix()*1000))).SetMethod("get").Send().End()
+	resp,body,err:=req.SetUrl("https://item-soa.jd.com/getWareBusiness&sku="+skuId).SetMethod("get").Send().End()
 	if err!=nil || resp.StatusCode!=http.StatusOK {
 		log.Println("预约商品失败")
 	}else{
-		reserveUrl:=gjson.Get(body,"url").String()
-		req=httpc.NewRequest(this.client)
-		_,_,_=req.SetUrl("https:"+reserveUrl).SetMethod("get").Send().End()
-		log.Println("预约成功，已获得抢购资格 / 您已成功预约过了，无需重复预约")
+		reserveUrl:=gjson.Get(body,"yuyueInfo.url").String()
+		buyDate=gjson.Get(body,"yuyueInfo.buyTime").String()
+		reserveTime:=gjson.Get(body,"yuyueInfo.yuyueTime").String()
+		if waitForReserveTime(reserveTime) {
+			req=httpc.NewRequest(this.client)
+			_,_,err =req.SetUrl("https:"+reserveUrl).SetMethod("get").Send().End()
+			if err == nil {
+				log.Println("预约成功，已获得抢购资格 / 您已成功预约过了，无需重复预约")
+			}
+		}
 	}
+	return buyDate, err
 }
 
 func (this *Seckill) getSeckillUrl() (string,error) {
