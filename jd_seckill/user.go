@@ -16,7 +16,6 @@ import (
 
 type User struct {
 	client *httpc.HttpClient
-	client2 *httpc.HttpClient
 	conf *conf.Config
 }
 
@@ -79,7 +78,7 @@ func (this *User) QrcodeTicket(wlfstkSmdl string) (string,error) {
 	return gjson.Get(body,"ticket").String(),nil
 }
 
-func (this *User) TicketInfo(ticket string) (string,error) {
+func (this *User) TicketInfo(ticket string) (cookies *httpc.Cookies,error) {
 	req:=httpc.NewRequest(this.client)
 	req.SetHeader("User-Agent",this.conf.Read("config","DEFAULT_USER_AGENT"))
 	req.SetHeader("Referer","https://passport.jd.com/uc/login?ltype=logout")
@@ -94,16 +93,11 @@ func (this *User) TicketInfo(ticket string) (string,error) {
 	}
 	if gjson.Get(body,"returnCode").Int()==0 {
 		log.Println("二维码信息校验成功")
-		cookies:=resp.Cookies()
+		cookies =resp.Cookies()
 		for _, cookie := range cookies {
 			log.Println("cookie:", cookie)
 		}
-		this.client2=httpc.NewHttpClient()
-		this.client2.SetCookies(cookies)
-		this.client2.SetRedirect(func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		})
-		return "",nil
+		return cookies,nil
 	}else{
 		log.Println("二维码信息校验失败")
 		return "",errors.New("二维码信息校验失败")
@@ -111,7 +105,7 @@ func (this *User) TicketInfo(ticket string) (string,error) {
 }
 
 func (this *User) RefreshStatus() error {
-	req:=httpc.NewRequest(this.client2)
+	req:=httpc.NewRequest(this.client)
 	req.SetHeader("User-Agent",this.conf.Read("config","DEFAULT_USER_AGENT"))
 	resp,_,err:=req.SetUrl("https://order.jd.com/center/list.action?rid="+strconv.Itoa(int(time.Now().Unix()*1000))).SetMethod("get").Send().End()
 	if err==nil && resp.StatusCode==http.StatusOK {
@@ -122,10 +116,13 @@ func (this *User) RefreshStatus() error {
 }
 
 func (this *User) GetUserInfo() (string,error) {
-	req:=httpc.NewRequest(this.client2)
+	req:=httpc.NewRequest(this.client)
 	req.SetHeader("User-Agent",this.conf.Read("config","DEFAULT_USER_AGENT"))
 	req.SetHeader("Referer","https://order.jd.com/center/list.action")
 	resp,body,err:=req.SetUrl("https://passport.jd.com/user/petName/getUserInfoForMiniJd.action?callback="+strconv.Itoa(common.Rand(1000000,9999999))+"&_="+strconv.Itoa(int(time.Now().Unix()*1000))).SetMethod("get").Send().End()
+	log.Println("GetUserInfo##########", resp)
+	log.Println("GetUserInfo##########", body)
+	log.Println("GetUserInfo##########", err)
 	if err!=nil || resp.StatusCode!=http.StatusOK {
 		log.Println("获取用户信息失败")
 		return "",errors.New("获取用户信息失败")
