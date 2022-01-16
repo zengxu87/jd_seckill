@@ -95,7 +95,7 @@ func (this *User) TicketInfo(ticket string) (string,error) {
 		log.Println("二维码信息校验成功")
 		cookies:=resp.Cookies()
 		for _, cookie := cookies {
-			log.Println("cookie:", cookies)
+			log.Println("cookie:", cookie1)
 		}
 		
 		return "",nil
