@@ -19,14 +19,14 @@ import (
 type Seckill struct {
 	client *httpc.HttpClient
 	conf *conf.Config
-	cookies *httpc.Cookies
+	cookies []*httpc.http.Cookie
 }
 
 func NewSeckill(client *httpc.HttpClient,conf *conf.Config) *Seckill {
 	return &Seckill{client: client,conf: conf}
 }
 
-func (this *Seckill) SetCookies(cookies *httpc.Cookies) {
+func (this *Seckill) SetCookies(cookies []*httpc.http.Cookie) {
 	this.cookies = cookies
 }
 func (this *Seckill) SkuTitle() (string,error) {

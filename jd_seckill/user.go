@@ -78,8 +78,8 @@ func (this *User) QrcodeTicket(wlfstkSmdl string) (string,error) {
 	return gjson.Get(body,"ticket").String(),nil
 }
 
-func (this *User) TicketInfo(ticket string) (*httpc.Cookies, error) {
-	var cookies *httpc.Cookies
+func (this *User) TicketInfo(ticket string) ([]*httpc.http.Cookie, error) {
+	var cookies []*httpc.http.Cookie
 	req:=httpc.NewRequest(this.client)
 	req.SetHeader("User-Agent",this.conf.Read("config","DEFAULT_USER_AGENT"))
 	req.SetHeader("Referer","https://passport.jd.com/uc/login?ltype=logout")
