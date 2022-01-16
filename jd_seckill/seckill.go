@@ -68,7 +68,9 @@ func (this *Seckill) MakeReserve() (string, error ){
 	req:=httpc.NewRequest(this.client)
 	req.SetCookies(this.cookies)
 	req.SetHeader("User-Agent",this.conf.Read("config","DEFAULT_USER_AGENT"))
-	req.SetHeader("Referer",fmt.Sprintf("https://item.jd.com/%s.html",skuId))
+	req.SetHeader("Host","yushou.jd.com")
+	req.SetHeader("Connection","keep-alive")
+	//req.SetHeader("Referer",fmt.Sprintf("https://item.jd.com/%s.html",skuId))
 	resp,body,err:=req.SetUrl("https://item-soa.jd.com/getWareBusiness?skuId="+skuId).SetMethod("get").Send().End()
 	if err!=nil || resp.StatusCode!=http.StatusOK {
 		log.Println("预约商品失败")
