@@ -66,10 +66,10 @@ func main()  {
 		}
 	}
 	log.Println("ticket=", ticket)
-	_,err:=user.TicketInfo(ticket)
+	cookies,err:=user.TicketInfo(ticket)
 	if err==nil {
 		log.Println("登录成功")
-		//seckill.SetCookies(cookie)
+		seckill.SetCookies(cookies)
 		//刷新用户状态和获取用户信息
 		for {
 			time.Sleep(time.Duration(1*time.Second))

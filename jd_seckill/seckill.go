@@ -19,16 +19,16 @@ import (
 type Seckill struct {
 	client *httpc.HttpClient
 	conf *conf.Config
-	//cookies []*httpc.http.Cookie
+	cookies []*http.Cookie
 }
 
 func NewSeckill(client *httpc.HttpClient,conf *conf.Config) *Seckill {
 	return &Seckill{client: client,conf: conf}
 }
 
-// func (this *Seckill) SetCookies(cookies []*httpc.http.Cookie) {
-// 	this.cookies = cookies
-// }
+func (this *Seckill) SetCookies(cookies []*http.Cookie) {
+	this.cookies = cookies
+}
 func (this *Seckill) SkuTitle() (string,error) {
 	skuId:=this.conf.Read("config","sku_id")
 	req:=httpc.NewRequest(this.client)
@@ -66,6 +66,7 @@ func (this *Seckill) MakeReserve() (string, error ){
 	}
 	skuId:=this.conf.Read("config","sku_id")
 	req:=httpc.NewRequest(this.client)
+	req.SetCookies(this.cookies)
 	req.SetHeader("User-Agent",this.conf.Read("config","DEFAULT_USER_AGENT"))
 	req.SetHeader("Referer",fmt.Sprintf("https://item.jd.com/%s.html",skuId))
 	resp,body,err:=req.SetUrl("https://item-soa.jd.com/getWareBusiness?skuId="+skuId).SetMethod("get").Send().End()
@@ -83,6 +84,7 @@ func (this *Seckill) MakeReserve() (string, error ){
 		log.Println("reserveTime:",reserveTime)
 		if this.waitForReserveTime(reserveTime) {
 			req=httpc.NewRequest(this.client)
+			req.SetCookies(this.cookies)
 			_,body,err =req.SetUrl("https:"+reserveUrl).SetMethod("get").Send().End()
 			if err == nil {
 				log.Println("预约成功，已获得抢购资格 / 您已成功预约过了，无需重复预约")
