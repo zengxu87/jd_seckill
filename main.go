@@ -66,37 +66,40 @@ func main()  {
 	if err==nil {
 		log.Println("登录成功")
 		//刷新用户状态和获取用户信息
-		if status:=user.RefreshStatus();status==nil {
-			userInfo,_:=user.GetUserInfo()
-			log.Println("用户:"+userInfo)
-			//开始预约,预约过的就重复预约
-			seckill:=jd_seckill.NewSeckill(client,config)
-			buyDate, err := seckill.MakeReserve()
-			if err != nil {
-				log.Println("预订出错...:%v", err)
-				break
+		for {
+			time.Sleep(time.Duration(time.Second))
+			if status:=user.RefreshStatus();status==nil {
+				userInfo,_:=user.GetUserInfo()
+				log.Println("用户:"+userInfo)
+				//开始预约,预约过的就重复预约
+				seckill:=jd_seckill.NewSeckill(client,config)
+				buyDate, err := seckill.MakeReserve()
+				if err != nil {
+					log.Println("预订出错...:%v", err)
+					break
+				}
+				//等待抢购/开始抢购
+				nowLocalTime:=time.Now().UnixNano()/1e6
+				jdTime,_:=getJdTime()
+				loc, _ := time.LoadLocation("Local")
+				t,_:=time.ParseInLocation("2006-01-02 15:04:05",buyDate,loc)
+				buyTime:=t.UnixNano()/1e6
+				diffTime:=nowLocalTime-jdTime
+				log.Println(fmt.Sprintf("正在等待到达设定时间:%s，检测本地时间与京东服务器时间误差为【%d】毫秒",buyDate,diffTime))
+				timerTime:=(buyTime+diffTime)-jdTime
+				if timerTime<=0 {
+					log.Println("请设置抢购时间")
+					os.Exit(0)
+				}
+				time.Sleep(time.Duration(timerTime)*time.Millisecond)
+				//开启任务
+				log.Println("时间到达，开始执行……")
+				start(seckill,5)
+				wg.Wait()
 			}
-			//等待抢购/开始抢购
-			nowLocalTime:=time.Now().UnixNano()/1e6
-			jdTime,_:=getJdTime()
-			loc, _ := time.LoadLocation("Local")
-			t,_:=time.ParseInLocation("2006-01-02 15:04:05",buyDate,loc)
-			buyTime:=t.UnixNano()/1e6
-			diffTime:=nowLocalTime-jdTime
-			log.Println(fmt.Sprintf("正在等待到达设定时间:%s，检测本地时间与京东服务器时间误差为【%d】毫秒",buyDate,diffTime))
-			timerTime:=(buyTime+diffTime)-jdTime
-			if timerTime<=0 {
-				log.Println("请设置抢购时间")
-				os.Exit(0)
-			}
-			time.Sleep(time.Duration(timerTime)*time.Millisecond)
-			//开启任务
-			log.Println("时间到达，开始执行……")
-			start(seckill,5)
-			wg.Wait()
+		}else{
+			log.Println("登录失败")
 		}
-	}else{
-		log.Println("登录失败")
 	}
 }
 
